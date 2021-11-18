@@ -185,13 +185,20 @@ TODO
 
 ## 5. Completa el teu exercici utilitzant el Wireshark amb el filtre adequat per obtenir la IP de la màquina que t’està fent l’nmap. Adjunta també una captura amb el filtre i la IP de l’atacant.
 
-TODO
+Hi ha moltes formes de filtrar el Wireshark per detectar un possible escaneig de ports.
 
-
-
-```
-sudo wireshark
-(ip.src == 192.168.1.19 && ip.dst == 192.168.1.73) || (ip.dst == 192.168.1.19 && ip.src == 192.168.1.73)
-sudo hping3 192.168.1.73 -p 2266 -s 59776 -R -A -M 109 -L 1753 -c 1
+He fet servir el filtre:
 
 ```
+tcp && tcp.flags.reset == 1 && tcp.window_size <=1024 && ip.src == 192.168.2.119
+```
+
+Aquí es mostren alguns filtres d'utilitat:
+
+![alt_text](images/wireshark01.png "Wireshark filtres d'utilitat")
+
+Aquí tenim el filtre preparat, però no hem executat l'escaneig de ports encara:
+![alt_text](images/wireshark02.png "Wireshark filtres d'utilitat")
+
+En el moment en què executem l'escaneig de ports ja comencem a veure tots aquells TCP Resets que han succeït després de l'intent d'escaneig per part de la IP **192.168.2.196**, que és la meva màquina atacant:
+![alt_text](images/wireshark03.png "Wireshark filtres d'utilitat")
