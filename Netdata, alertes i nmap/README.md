@@ -9,6 +9,10 @@ header-includes:
 - '`\newcommand{\headerlogo}{\raisebox{0pt}[0pt]{\includegraphics[width=3cm]{../institut_montilivi.png}}}`{=latex}'
 ---
 
+<!--
+pandoc README.md -o Toni_Peraira_Netdata_alertes_nmap.pdf --from markdown --template eisvogel --listings --pdf-engine=xelatex
+-->
+
 # Netdata, alertes i nmap  <!-- omit in toc -->
 
 Activitat: Crea una alerta per detectar un escanig de més de 100 ports.
