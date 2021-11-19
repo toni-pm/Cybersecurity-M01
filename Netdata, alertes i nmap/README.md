@@ -1,3 +1,14 @@
+---
+title: "Netdata, alertes i nmap"
+author: "Toni Peraira"
+date: "2021-11-19"
+version: "1.0"
+geometry: left=2.54cm,right=2.54cm,top=2.54cm,bottom=2.54cm
+header-right: '\headerlogo'
+header-includes:
+- '`\newcommand{\headerlogo}{\raisebox{0pt}[0pt]{\includegraphics[width=3cm]{../institut_montilivi.png}}}`{=latex}'
+---
+
 # Netdata, alertes i nmap  <!-- omit in toc -->
 
 Activitat: Crea una alerta per detectar un escanig de més de 100 ports.
@@ -14,7 +25,7 @@ Activitat: Crea una alerta per detectar un escanig de més de 100 ports.
 
 Un TCP Reset és un paquet, també anomenat segment, que s'utilitza en el protocol TCP per reiniciar la connexió.
 
-![alt_text](images/tcp01.png "Estructura d'un segment TCP")
+!["Estructura d'un segment TCP"](images/tcp01.png "Estructura d'un segment TCP")
 
 Imatge extreta de: https://fiberbit.com.tw/tcp-transmission-control-protocol-segments-and-fields/
 
@@ -38,7 +49,7 @@ Quan es troben molts TCP Resets pot indicar que s'està realitzant un escaneig d
 
 Aquestes són les configuracions de les alertes del Netdata:
 
-![alt_text](images/tcp02.png "Configuracions d'alertes")
+!["Configuracions d'alertes"](images/tcp02.png "Configuracions d'alertes")
 
 Contingut del fitxer *tcp_resets.conf*:
 ```
@@ -136,29 +147,21 @@ while true; do nmap -sS 192.168.1.19; done
 
 Moment en que salta l'alerta:
 
-![alt_text](images/tcp04.png "Moment en que salta l'alerta")
+!["Moment en que salta l'alerta"](images/tcp04.png "Moment en que salta l'alerta")
 
 A les següents captures es poden veure dos moments amb incidències, fent que salti l'alerta dues vegades, per l'intent fet en la mateixa màquina i en l'altra màquina en local.
-![alt_text](images/tcp05.png "Gràfic incidències TCP")
-![alt_text](images/tcp06.png "Log alertes")
 
+!["Gràfic incidències TCP"](images/tcp05.png "Gràfic incidències TCP")
+
+!["Log alertes"](images/tcp06.png "Log alertes")
 
 Aquest és el correu rebut amb l'alerta:
 
-![alt_text](images/tcp07.png "Correu amb l'alerta")
-![alt_text](images/tcp08.png "Correu amb l'alerta")
+!["Correu amb l'alerta"](images/tcp07.png "Correu amb l'alerta")
 
-## 3. Després d’estudiar i entendre com funcionen les alarmes creades per Netdata sobre TCP resets, crea una alerta al mateix fitxer *tcp_resets.conf* que comenci amb el teu nom (per exemple elteunom_mes_de_100_TCP_Resets) i que t’avisi quan la teva màquina enviï més de 100 tcp resets seguits. Adjunta una captura de l’alerta que acabes de fer. 
+!["Correu amb l'alerta"](images/tcp08.png "Correu amb l'alerta")
 
->Com a mínim ha de contenir:
->* alarm: el nom de la teva alarma
->* on: ipv4.tcphandshake
->* lookup: el teu càlcul
->* warn: la teva alerta
->* info: missatge d’alerta que vols rebre
->* to: sysadmin
->
-> Quan crees una alarma, pots reiniciar el servei amb: sudo netdatacli reload-health
+## 3. Després d’estudiar i entendre com funcionen les alarmes creades per Netdata sobre TCP resets, crea una alerta al mateix fitxer *tcp_resets.conf* que comenci amb el teu nom (per exemple elteunom_mes_de_100_TCP_Resets) i que t’avisi quan la teva màquina enviï més de 100 tcp resets seguits. Adjunta una captura de l’alerta que acabes de fer.
 
 ```bash
 # Editem el fitxer per afegir alerta.
@@ -192,29 +195,29 @@ sudo netdatacli reload-health
 
 Informació de l'alerta en Netdata:
 
-![alt_text](images/tcp09.png "Informació de l'alerta en Netdata")
+!["Informació de l'alerta en Netdata"](images/tcp09.png "Informació de l'alerta en Netdata")
 
 ## 4. Adjunta una captura de la teva alerta que has rebut per correu electrònic.
 
 Logs de l'alerta:
 
-![alt_text](images/tcp10.png "Logs de l'alerta")
+!["Logs de l'alerta"](images/tcp10.png "Logs de l'alerta")
 
 Moment en que salta una notificació d'alerta crítica:
 
-![alt_text](images/tcp11.png "Moment en que salta una notificació d'alerta crítica")
+!["Moment en que salta una notificació d'alerta crítica"](images/tcp11.png "Moment en que salta una notificació d'alerta crítica")
 
 Moment en que salta una notificació que tot ha tornat a la normalitat:
 
-![alt_text](images/tcp12.png "Moment en que salta una notificació que tot ha tornat a la normalitat")
+!["Moment en que salta una notificació que tot ha tornat a la normalitat"](images/tcp12.png "Moment en que salta una notificació que tot ha tornat a la normalitat")
 
 Correus rebuts:
 
-![alt_text](images/tcp13.png "Correus rebuts")
+!["Correus rebuts"](images/tcp13.png "Correus rebuts")
 
 Correu amb l'alerta crítica:
 
-![alt_text](images/tcp14.png "Correu amb l'alerta crítica")
+!["Correu amb l'alerta crítica"](images/tcp14.png "Correu amb l'alerta crítica")
 
 ## 5. Completa el teu exercici utilitzant el Wireshark amb el filtre adequat per obtenir la IP de la màquina que t’està fent l’nmap. Adjunta també una captura amb el filtre i la IP de l’atacant.
 
@@ -238,12 +241,14 @@ On:
 
 Aquí es mostren alguns filtres d'utilitat:
 
-![alt_text](images/wireshark01.png "Wireshark filtres d'utilitat")
+!["Wireshark filtres d'utilitat"](images/wireshark01.png "Wireshark filtres d'utilitat")
 
 Imatge extreta de: https://www.infosecmatter.com/detecting-network-attacks-with-wireshark/
 
 Aquí tenim el filtre preparat, però no hem executat l'escaneig de ports encara:
-![alt_text](images/wireshark02.png "Wireshark filtres d'utilitat")
+
+!["Wireshark filtres d'utilitat"](images/wireshark02.png "Wireshark filtres d'utilitat")
 
 En el moment en què executem l'escaneig de ports ja comencem a veure tots aquells TCP Resets que han succeït després de l'intent d'escaneig per part de la IP **192.168.2.196**, que és la meva màquina atacant:
-![alt_text](images/wireshark03.png "Wireshark filtres d'utilitat")
+
+!["Wireshark filtres d'utilitat"](images/wireshark03.png "Wireshark filtres d'utilitat")
