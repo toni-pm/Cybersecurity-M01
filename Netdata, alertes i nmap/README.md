@@ -160,7 +160,13 @@ Aquest és el correu rebut amb l'alerta:
 >
 > Quan crees una alarma, pots reiniciar el servei amb: sudo netdatacli reload-health
 
-```
+```bash
+# Editem el fitxer per afegir alerta.
+sudo vi /usr/lib/netdata/conf.d/health.d/tcp_resets.conf
+
+# Toni Peraira Alert
+# Cada 100 TCP Resets en 5 segons, salta l'alerta amb estat WARNING.
+# Si arriben a 1000, salta l'alerta amb estat crític.
     alarm: toni_peraira_mes_de_100_TCP_Resets                                                       
        on: ipv4.tcphandshake                                                              
     class: Errors                                                                         
@@ -168,20 +174,47 @@ Aquest és el correu rebut amb l'alerta:
 component: Network                                                                        
        os: linux                                                                          
     hosts: *                                                                              
-   lookup: average -10s unaligned absolute of OutRsts                                     
-    units: tcp resets seguits                                                                 
-    every: 10s                                                                            
-     warn: $this > ((($1m_ipv4_tcp_resets_sent < 5)?(5):($1m_ipv4_tcp_resets_sent)) * (($s
-    delay: up 20s down 60m multiplier 1.2 max 2h                                          
-     info: more than 100 TCP resets have been sent in a row. \                  
-           This can indicate a port scan, \                                               
-           or that a service running on this host has crashed.                  
+   lookup: sum -5s unaligned absolute of OutRsts                                     
+    units: tcp resets/s                                                      
+     warn: $this > 100    
+     crit: $this > 1000
+     info: more than 100 TCP resets have been sent in a row, \
+            over the last 5 seconds. \                  
+            This can indicate a port scan, \                                               
+            or that a service running on this host has crashed.                  
        to: sysadmin  
 ```
 
+```bash
+# Reiniciem
+sudo netdatacli reload-health
+```
+
+Informació de l'alerta en Netdata:
+
+![alt_text](images/tcp09.png "Informació de l'alerta en Netdata")
+
 ## 4. Adjunta una captura de la teva alerta que has rebut per correu electrònic.
 
-TODO
+Logs de l'alerta:
+
+![alt_text](images/tcp10.png "Logs de l'alerta")
+
+Moment en que salta una notificació d'alerta crítica:
+
+![alt_text](images/tcp11.png "Moment en que salta una notificació d'alerta crítica")
+
+Moment en que salta una notificació que tot ha tornat a la normalitat:
+
+![alt_text](images/tcp12.png "Moment en que salta una notificació que tot ha tornat a la normalitat")
+
+Correus rebuts:
+
+![alt_text](images/tcp13.png "Correus rebuts")
+
+Correu amb l'alerta crítica:
+
+![alt_text](images/tcp14.png "Correu amb l'alerta crítica")
 
 ## 5. Completa el teu exercici utilitzant el Wireshark amb el filtre adequat per obtenir la IP de la màquina que t’està fent l’nmap. Adjunta també una captura amb el filtre i la IP de l’atacant.
 
@@ -192,10 +225,22 @@ He fet servir el filtre:
 ```
 tcp && tcp.flags.reset == 1 && tcp.window_size <=1024 && ip.src == 192.168.2.119
 ```
+On:
+
+> * tcp: Filtrem pel protocol TCP.
+> 
+> * tcp.flags.reset == 1: Com estem fent exercicis sobre TCP Resets, filtrem pel *flag reset*, el qual hem descrit al principi.
+> 
+> * tcp.windows_size <= 1024: L'escaneig de ports amb Nmap o altres eines no envien gaires dades, únicament envia les dades essencials per comprovar que existeix el port. Amb aquest filtre, filtrem paquets de poca grandària.
+> 
+> ip.src == 192.168.2.119: És la IP de la màquina que rep l'escaneig de ports. 
+
 
 Aquí es mostren alguns filtres d'utilitat:
 
 ![alt_text](images/wireshark01.png "Wireshark filtres d'utilitat")
+
+Imatge extreta de: https://www.infosecmatter.com/detecting-network-attacks-with-wireshark/
 
 Aquí tenim el filtre preparat, però no hem executat l'escaneig de ports encara:
 ![alt_text](images/wireshark02.png "Wireshark filtres d'utilitat")
