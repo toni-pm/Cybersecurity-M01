@@ -1,4 +1,4 @@
----
+<!-----
 title: "Wazuh - Centralized Agent Configuration"
 author: "Toni Peraira"
 date: "2022-02-04"
