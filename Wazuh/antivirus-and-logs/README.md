@@ -24,6 +24,8 @@ IP: 192.168.128.89
 Name: B70017351361129
 ```
 
+!["Events viewer"](images/image01.png "Events viewer")
+
 ```xml
   <localfile>
     <location>Kaspersky Endpoint Security</location>
@@ -38,7 +40,19 @@ https://secure.eicar.org/eicar.com.txt
 https://secure.eicar.org/eicar_com.zip
 https://secure.eicar.org/eicarcom2.zip
 
+!["eicarcom2.zip Denied"](images/image02.png "eicarcom2.zip Denied")
 
+!["eicar_com.zip Denied"](images/image03.png "eicar_com.zip Denied")
+
+!["eicar.com Denied"](images/image04.png "eicar.com Denied")
+
+!["eicar.com.txt Denied"](images/image05.png "eicar.com.txt Denied")
+
+!["Security events"](images/image06.png "Security events")
+
+!["Add filter"](images/image07.png "Add filter")
+
+!["Filtered logs"](images/image08.png "Filtered logs")
 
 ```json
 {
@@ -383,3 +397,30 @@ https://secure.eicar.org/eicarcom2.zip
   ]
 }
 ```
+
+
+!["Save search"](images/image09.png "Save search")
+
+!["Open search"](images/image10.png "Open search")
+
+!["Custom 'Wazuh Alerts Kaspersky' search"](images/image11.png "Custom 'Wazuh Alerts Kaspersky' search")
+
+!["Create visualitzation"](images/image12.png "Create visualitzation")
+
+!["Add graph"](images/image13.png "Add graph")
+
+!["Create graph"](images/image14.png "Create graph")
+
+!["Save visualization"](images/image15.png "Save visualization")
+
+!["Create dashboard"](images/image16.png "Create dashboard")
+
+!["Editing dashboard"](images/image17.png "Editing dashboard")
+
+!["Add panels to dashboard"](images/image18.png "Add panels to dashboard")
+
+!["Editing our dashboard"](images/image19.png "Editing our dashboard")
+
+!["Save dashboard"](images/image20.png "Save dashboard")
+
+!["Kaspersky Dashboard"](images/image21.png "Kaspersky Dashboard")

@@ -1,3 +1,7 @@
+## Wazuh FIM (File Integrity Monitoring)
+
+!["Group config"](images/image01.png "Group config")
+
 
 ```xml
 <agent_config>
@@ -16,6 +20,9 @@
 	</sca>
 </agent_config>
 ```
+
+!["Agent logs"](images/image02.png "Agent logs")
+
 
 ```
 2022/02/15 23:00:40 wazuh-agent: INFO: (6010): File integrity monitoring scan frequency: 60 seconds
@@ -37,6 +44,9 @@
 2022/02/15 23:05:54 wazuh-agent: INFO: (6008): File integrity monitoring scan started.
 ```
 
+!["Integrity monitoring notifications"](images/image03.png "Integrity monitoring notifications")
+
+
 ```xml
 <!-- File integrity monitoring -->
 <syscheck>
@@ -47,6 +57,10 @@
     ...
 </syscheck>
 ```
+
+!["Monitored directories"](images/image04.png "Monitored directories")
+
+
 
 C:\Windows\win.ini
 
@@ -108,6 +122,14 @@ C:\Windows\System32\drivers\etc\hosts
 142.250.178.174	toni-pm.herokuapp.com
 ```
 
+!["Integrity monitoring dashboard"](images/image05.png "Integrity monitoring dashboard")
+
+!["Integrity monitoring alerts"](images/image06.png "Integrity monitoring alerts")
+
+---
+
+## Wazuh SCA (Security Configuration Assessment)
+
 ```xml
 <sca>
     <enabled>yes</enabled>
@@ -117,64 +139,101 @@ C:\Windows\System32\drivers\etc\hosts
 </sca>
 ```
 
+!["SCA Dashboard"](images/image07.png "SCA Dashboard")
 
-
-14543
-Ensure 'MSS: (AutoAdminLogon) Enable Automatic Logon (not recommended)' is set to 'Disabled'
-Registry: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon
-Failed
-
-**Rationale**
-
-If you configure a computer for automatic logon, anyone who can physically gain access to the computer can also gain access to everything that is on the computer, including any network or networks that the computer is connected to. Also, if you enable automatic logon, the password is stored in the registry in plaintext. The specific registry key that stores this setting is remotely readable by the Authenticated Users group. As a result, this entry is appropriate only if the computer is physically secured and if you ensure that untrusted users cannot remotely see the registry.
-
-**Remediation**
-
-To establish the recommended configuration via GP, set the following UI path to Disabled: Computer Configuration\Policies\Administrative Templates\MSS (Legacy)\MSS: (AutoAdminLogon) Enable Automatic Logon (not recommended) Note: This Group Policy path does not exist by default. An additional Group Policy template (MSS-legacy.admx/adml) is required - it is available from this TechNet blog post: The MSS settings - Microsoft Security Guidance blog.
-
-**Description**
-
-This setting is separate from the Welcome screen feature in Windows XP and Windows Vista; if that feature is disabled, this setting is not disabled. If you configure a computer for automatic logon, anyone who can physically gain access to the computer can also gain access to everything that is on the computer, including any network or networks to which the computer is connected. Also, if you enable automatic logon, the password is stored in the registry in plaintext, and the specific registry key that stores this value is remotely readable by the Authenticated Users group. The recommended state for this setting is: Disabled.
-
-**Check (Condition: all)**
-
-r:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon -> AutoAdminLogon -> 0
-
-**Compliance**
-
-cis_csc: 16
+!["SCA Inventory"](images/image08.png "SCA Inventory")
 
 ---
 
-14539
-Ensure Null sessions are not allowed
-Registry: HKLM\System\CurrentControlSet\Control\Lsa
-Failed
+**14543**	Ensure 'MSS: (AutoAdminLogon) Enable Automatic Logon (not recommended)' is set to 'Disabled'
 
-**Check (Condition: all)**
-r:HKLM\System\CurrentControlSet\Control\Lsa -> RestrictAnonymous -> 1
+![](images/image09.png)
 
-Compliance
-nist_800_53: SI.4
-
-pci_dss: 11.4
-
-tsc: CC6.1,CC6.8,CC7.2,CC7.3,CC7.4
+![](images/image10.png)
 
 ---
 
-14529
-Ensure 'Network security: Minimum session security for NTLM SSP based (including secure RPC) servers' is set to 'Require NTLMv2 session security, Require 128-bit encryption'
-Registry: HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0
-Failed
+**14539**	Ensure Null sessions are not allowed
 
-Rationale
-You can enable all of the options for this policy setting to help protect network traffic that uses the NTLM Security Support Provider (NTLM SSP) from being exposed or tampered with by an attacker who has gained access to the same network. That is, these options help protect against man-in-the-middle attacks.
-Remediation
-To establish the recommended configuration via GP, set the following UI path to Require NTLMv2 session security, Require 128-bit encryption: Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Network security: Minimum session security for NTLM SSP based (including secure RPC) servers.
-Description
-This policy setting determines which behaviors are allowed by servers for applications using the NTLM Security Support Provider (SSP). The SSP Interface (SSPI) is used by applications that need authentication services. The setting does not modify how the authentication sequence works but instead require certain behaviors in applications that use the SSPI. The recommended state for this setting is: Require NTLMv2 session security, Require 128-bit encryption. Note: These values are dependent on the Network security.
-Check (Condition: all)
-r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0 -> NTLMMinServerSec -> 537395200
-Compliance
-cis_csc: 13
+![](images/image11.png)
+
+![](images/image12.png)
+
+---
+
+**14529**	Ensure 'Network security: Minimum session security for NTLM SSP based (including secure RPC) servers' is set to 'Require NTLMv2 session security, Require 128-bit encryption'
+
+![](images/image13.png)
+
+![](images/image32.png)
+
+---
+
+**14528**	Ensure 'Network security: Minimum session security for NTLM SSP based (including secure RPC) clients' is set to 'Require NTLMv2 session security, Require 128-bit encryption'
+
+
+![](images/image15.png)
+
+![](images/image31.png)
+
+---
+
+**14520**	Ensure 'Network access: Do not allow storage of passwords and credentials for network authentication' is set to 'Enabled'
+
+![](images/image17.png)
+
+![](images/image18.png)
+
+---
+
+**14518**	Ensure 'Microsoft network server: Digitally sign communications (if client agrees)' is set to 'Enabled'
+
+![](images/image19.png)
+
+![](images/image20.png)
+
+---
+
+**14517**	Ensure 'Microsoft network server: Digitally sign communications (always)' is set to 'Enabled'
+
+![](images/image21.png)
+
+![](images/image22.png)
+
+---
+
+**14513**	Ensure 'Microsoft network client: Digitally sign communications (always)' is set to 'Enabled'
+
+![](images/image23.png)
+
+![](images/image24.png)
+
+---
+
+**14512**	Ensure 'Interactive logon: Smart card removal behavior' is set to 'Lock Workstation' or higher
+
+![](images/image25.png)
+
+![](images/image26.png)
+
+---
+
+**14509**	Ensure 'Interactive logon: Do not display last user name' is set to 'Enabled'
+
+![](images/image27.png)
+
+![](images/image28.png)
+
+---
+
+**14503**	Ensure 'Devices: Prevent users from installing printer drivers' is set to 'Enabled'
+
+![](images/image29.png)
+
+![](images/image30.png)
+
+---
+
+!["SCA Inventory after corrections"](images/image33.png "SCA Inventory after corrections")
+
+!["SCA Dashboard after corrections"](images/image34.png "SCA Dashboard after corrections")
