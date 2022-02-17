@@ -24,7 +24,15 @@ IP: 192.168.128.89
 Name: B70017351361129
 ```
 
+The chosen antivirus is Kaspersky, is the one that we found that best matches with the functionalities that Wazuh provide us. 
+
+First we have to identify where are the Kaspersky logs and events. 
+
+Unlike other antivirus, we can find his monitoring in *Windows Events Viewer > Applications and Services Logs > Kaspersky Endpoint Security*. This will be the reference of our channel in Wazuh.
+
 !["Events viewer"](images/image01.png "Events viewer")
+
+The next point is add this reference in our agent *ossec.conf*. We can also add this information in the wazuh manager if we have this agent in a group.
 
 ```xml
   <localfile>
@@ -33,22 +41,28 @@ Name: B70017351361129
   </localfile>
 ```
 
-Save and restart
+Now we save and restart the Wazuh agent service.
 
-https://secure.eicar.org/eicar.com
-https://secure.eicar.org/eicar.com.txt
-https://secure.eicar.org/eicar_com.zip
-https://secure.eicar.org/eicarcom2.zip
+To check if it works, we will force Kaspersky alerts that will add events that we will capture and we will be able to monitour in our Wazuh manager. We can do it accessing to these files in our navigator:
 
-!["eicarcom2.zip Denied"](images/image02.png "eicarcom2.zip Denied")
+- https://secure.eicar.org/eicar.com
 
-!["eicar_com.zip Denied"](images/image03.png "eicar_com.zip Denied")
+- https://secure.eicar.org/eicar.com.txt
 
-!["eicar.com Denied"](images/image04.png "eicar.com Denied")
+- https://secure.eicar.org/eicar_com.zip
 
-!["eicar.com.txt Denied"](images/image05.png "eicar.com.txt Denied")
+- https://secure.eicar.org/eicarcom2.zip
+
+|                         |                         |
+| ----------------------- | ----------------------- |
+| ![](images/image02.png) | ![](images/image03.png) |
+| ![](images/image04.png) | ![](images/image05.png) |
+
+If we go to the *Security events* screen of our agent we can monitor these events and see the events that we force.
 
 !["Security events"](images/image06.png "Security events")
+
+To see only the Kaspersky events we can add a custom filter
 
 !["Add filter"](images/image07.png "Add filter")
 
