@@ -62,11 +62,15 @@ If we go to the *Security events* screen of our agent we can monitor these event
 
 !["Security events"](images/image06.png "Security events")
 
-To see only the Kaspersky events we can add a custom filter
+To see only the Kaspersky events we can add a custom filter.
 
 !["Add filter"](images/image07.png "Add filter")
 
 !["Filtered logs"](images/image08.png "Filtered logs")
+
+The events can be exported in JSON format.
+
+Attached the exported information:
 
 ```json
 {
@@ -412,12 +416,17 @@ To see only the Kaspersky events we can add a custom filter
 }
 ```
 
+We can save this search configuration to find it quickly, since it is information that we may want to monitor often.
 
 !["Save search"](images/image09.png "Save search")
 
 !["Open search"](images/image10.png "Open search")
 
 !["Custom 'Wazuh Alerts Kaspersky' search"](images/image11.png "Custom 'Wazuh Alerts Kaspersky' search")
+
+We can also create custom dashboards to monitor what we want. A dashboard is organized with panels in a row and column structure. Thus, we can have different information with different time ranges in custom graphs.
+
+First of all, we will create a visualization bar chart with the number of kaspersky alerts per agent.
 
 !["Create visualitzation"](images/image12.png "Create visualitzation")
 
@@ -427,14 +436,20 @@ To see only the Kaspersky events we can add a custom filter
 
 !["Save visualization"](images/image15.png "Save visualization")
 
+With the first element created, we proceed to create the dashboard.
+
 !["Create dashboard"](images/image16.png "Create dashboard")
 
 !["Editing dashboard"](images/image17.png "Editing dashboard")
+
+We have created other panels to create a useful dashboard. Now we add each graph in a position
 
 !["Add panels to dashboard"](images/image18.png "Add panels to dashboard")
 
 !["Editing our dashboard"](images/image19.png "Editing our dashboard")
 
 !["Save dashboard"](images/image20.png "Save dashboard")
+
+Now we can monitor the chosen information simply by opening our dashboard.
 
 !["Kaspersky Dashboard"](images/image21.png "Kaspersky Dashboard")
