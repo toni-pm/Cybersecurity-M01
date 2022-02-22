@@ -45,18 +45,18 @@ Now we save and restart the Wazuh agent service.
 
 To check if it works, we will force Kaspersky alerts that will add events that we will capture and we will be able to monitour in our Wazuh manager. We can do it accessing to these files in our navigator:
 
-- https://secure.eicar.org/eicar.com
+- [https://secure.eicar.org/eicar.com)](https://secure.eicar.org/eicar.com)
 
-- https://secure.eicar.org/eicar.com.txt
+- [https://secure.eicar.org/eicar.com.txt](https://secure.eicar.org/eicar.com.txt)
 
-- https://secure.eicar.org/eicar_com.zip
+- [https://secure.eicar.org/eicar_com.zip](https://secure.eicar.org/eicar_com.zip)
 
-- https://secure.eicar.org/eicarcom2.zip
+- [https://secure.eicar.org/eicarcom2.zip](https://secure.eicar.org/eicarcom2.zip)
 
 |                         |                         |
 | ----------------------- | ----------------------- |
-| ![](images/image02.png) | ![](images/image03.png) |
-| ![](images/image04.png) | ![](images/image05.png) |
+| ![](images/image02.png){ width=50% } | ![](images/image03.png){ width=50% } |
+| ![](images/image04.png){ width=50% } | ![](images/image05.png){ width=50% } |
 
 If we go to the *Security events* screen of our agent we can monitor these events and see the events that we force.
 

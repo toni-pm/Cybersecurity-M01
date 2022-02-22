@@ -1,3 +1,18 @@
+<!-----
+title: "Wazuh - FIM and SCA"
+author: "Toni Peraira"
+date: "2022-02-11"
+version: "1.0"
+geometry: left=2.54cm,right=2.54cm,top=2.54cm,bottom=2.54cm
+header-right: '\headerlogo'
+header-includes:
+- '`\newcommand{\headerlogo}{\raisebox{0pt}[0pt]{\includegraphics[width=3cm]{../../institut_montilivi.png}}}`{=latex}'
+---
+
+<!--
+pandoc README.md -o Toni_Peraira_FIM_and_SCA.pdf --from markdown --template eisvogel --listings --pdf-engine=xelatex --toc -s -V toc-title:"Index"
+-->
+
 ## Wazuh FIM (File Integrity Monitoring)
 
 This module runs periodic scans of the agent system, this action stores the checksums and atributes of the monitored elements and Windows registry in a local database.
@@ -59,14 +74,14 @@ We can see the events in our Wazuh agent Integrity Monitoring  dashboard.
 
 !["Integrity monitoring notifications"](images/image03.png "Integrity monitoring notifications")
 
-We can also check the integrity of a directory that we choose, changing the agent or group config. In our case we are going to check the integrity of the directory *C:\Users\Toni\Documents\m05*
+We can also check the integrity of a directory that we choose, changing the agent or group config. In our case we are going to check the integrity of the directory *C:/Users/Toni/Documents/m05*
 
 ```xml
 <!-- File integrity monitoring -->
 <syscheck>
     ...
     <directories check_all="yes" realtime="yes" report_changes="yes">
-        C:\Users\Toni\Documents\m05
+        C:/Users/Toni/Documents/m05
     </directories>
     ...
 </syscheck>
@@ -78,7 +93,7 @@ The custom directory is added in the monitored directories section.
 
 Let's check how well the integrity monitoring works. We will edit some files and directories that we know are included in the process.
 
-- C:\Windows\win.ini
+- C:/Windows/win.ini
 
 ```
 ; for 16-bit app support
@@ -111,7 +126,7 @@ tts=MPEGVideo
 test=Test
 ```
 
-- C:\Windows\System32\drivers\etc\hosts
+- C:/Windows/System32/drivers/etc/hosts
 
 ```
 # Copyright (c) 1993-2009 Microsoft Corp.
@@ -138,9 +153,9 @@ test=Test
 142.250.178.174	toni-pm.herokuapp.com
 ```
 
-- Added C:\Windows\System32\drivers\etc\exploit
+- Added C:/Windows/System32/drivers/etc/exploit
 
-- Added C:\Users\Toni\Documents\m05\m05_exploit
+- Added C:/Users/Toni/Documents/m05/m05_exploit
 
 These changes have generated alerts in the Integrity monitoring dashboard of the agent.
 
