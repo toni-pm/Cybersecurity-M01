@@ -1,7 +1,17 @@
 ## Wazuh FIM (File Integrity Monitoring)
 
+This module runs periodic scans of the agent system, this action stores the checksums and atributes of the monitored elements and Windows registry in a local database.
+
+In the next scan will comare the current checksums with the stored values. 
+
+
+When a change is detected, it is reported in our Wazuh manager.
+
+Therefore, it is the appropriate module to identify possible intrusions that may have altered the integrity of our system.
+
 !["Group config"](images/image01.png "Group config")
 
+We change the file integrity monitoring frequency to make our tests. We set the frequency in 60 seconds.
 
 ```xml
 <agent_config>
@@ -20,6 +30,7 @@
 	</sca>
 </agent_config>
 ```
+In the agent logs we can see how the integrity check has been done every 60 seconds.
 
 !["Agent logs"](images/image02.png "Agent logs")
 
@@ -44,8 +55,11 @@
 2022/02/15 23:05:54 wazuh-agent: INFO: (6008): File integrity monitoring scan started.
 ```
 
+We can see the events in our Wazuh agent Integrity Monitoring  dashboard.
+
 !["Integrity monitoring notifications"](images/image03.png "Integrity monitoring notifications")
 
+We can also check the integrity of a directory that we choose, changing the agent or group config. In our case we are going to check the integrity of the directory *C:\Users\Toni\Documents\m05*
 
 ```xml
 <!-- File integrity monitoring -->
@@ -58,11 +72,13 @@
 </syscheck>
 ```
 
+The custom directory is added in the monitored directories section.
+
 !["Monitored directories"](images/image04.png "Monitored directories")
 
+Let's check how well the integrity monitoring works. We will edit some files and directories that we know are included in the process.
 
-
-C:\Windows\win.ini
+- C:\Windows\win.ini
 
 ```
 ; for 16-bit app support
@@ -95,7 +111,7 @@ tts=MPEGVideo
 test=Test
 ```
 
-C:\Windows\System32\drivers\etc\hosts
+- C:\Windows\System32\drivers\etc\hosts
 
 ```
 # Copyright (c) 1993-2009 Microsoft Corp.
@@ -122,6 +138,12 @@ C:\Windows\System32\drivers\etc\hosts
 142.250.178.174	toni-pm.herokuapp.com
 ```
 
+- Added C:\Windows\System32\drivers\etc\exploit
+
+- Added C:\Users\Toni\Documents\m05\m05_exploit
+
+These changes have generated alerts in the Integrity monitoring dashboard of the agent.
+
 !["Integrity monitoring dashboard"](images/image05.png "Integrity monitoring dashboard")
 
 !["Integrity monitoring alerts"](images/image06.png "Integrity monitoring alerts")
@@ -129,6 +151,12 @@ C:\Windows\System32\drivers\etc\hosts
 ---
 
 ## Wazuh SCA (Security Configuration Assessment)
+
+This module aims to provide the user with the best possible experience when performing scans about hardening and configuration policies.
+
+This allows us to improve some security elements of the system
+
+The first thing is always to activate the functionality in the agent config.
 
 ```xml
 <sca>
@@ -139,9 +167,17 @@ C:\Windows\System32\drivers\etc\hosts
 </sca>
 ```
 
+Once configured, we can refresh the SCA dashboard.
+
+This action will provide us with information about those points that we can improve in the agent
+
 !["SCA Dashboard"](images/image07.png "SCA Dashboard")
 
 !["SCA Inventory"](images/image08.png "SCA Inventory")
+
+I attach the failed points of my agent and how I have solved it based on the information received.
+
+In total there are 11 points to correct.
 
 ---
 
@@ -233,6 +269,8 @@ C:\Windows\System32\drivers\etc\hosts
 ![](images/image30.png)
 
 ---
+
+Once all the points have been corrected, we have the agent a little safer.
 
 !["SCA Inventory after corrections"](images/image33.png "SCA Inventory after corrections")
 
