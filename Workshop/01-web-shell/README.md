@@ -1,3 +1,20 @@
+---
+title: "Workshop 1 - Web Shell"
+author: "Toni Peraira"
+date: "2022-03-04"
+version: "1.0"
+geometry: left=2.54cm,right=2.54cm,top=2.54cm,bottom=2.54cm
+header-right: '\headerlogo'
+header-includes:
+- '`\newcommand{\headerlogo}{\raisebox{0pt}[0pt]{\includegraphics[width=3cm]{../../institut_montilivi.png}}}`{=latex}'
+---
+
+<!--
+pandoc README.md -o Toni_Peraira_Workshop_01_Web_Shell.pdf --from markdown --template eisvogel --listings --pdf-engine=xelatex
+-->
+
+# Workshop 1 - Web Shell
+
 In this exercise we will try to execute a reverse shell in a server, in order to detect it with a Wazuh manager installed in another server.
 
 
@@ -13,7 +30,7 @@ IP: 192.168.128.80
 
 On the victim machine there is a website with a form that we can exploit.
 
-http://192.168.128.49/workshop1/
+[http://192.168.128.49/workshop1/](http://192.168.128.49/workshop1/)
 
 We know that the server uses PHP, so we will use a PHP exploit called B374K, a web shell download it from 
 [https://github.com/backdoorhub/shell-backdoor-list](https://github.com/backdoorhub/shell-backdoor-list).
@@ -41,11 +58,9 @@ The first thing we will do is change our shell password.
 
 In the exploit there is a screen called *rs* (Reverse Shell) with a list of shells to execute. We will use a PHP.
 
-Press 'Go'.
-
 !["Bind shell"](images/image06.png "Bind shell")
 
-Reverse shell
+Press 'Go' and initialize reverse shell.
 
 !["Reverse shell with Netcat"](images/image07.png "Reverse shell with Netcat")
 
@@ -185,27 +200,11 @@ It can also be done with the command shown below.
 
 !["Opened TCP connections"](images/image11.png "Opened TCP connections")
 
-Trying to detect reverse shell in Wazuh manager.
+Trying to detect reverse shell in Wazuh manager from [https://documentation.wazuh.com/current/proof-of-concept-guide/detect-unauthorized-processes-netcat.html](https://documentation.wazuh.com/current/proof-of-concept-guide/detect-unauthorized-processes-netcat.html)
 
-https://192.168.128.80
+Add the following configuration in the agent's */var/ossec/etc/ossec.conf*. Get a periodically list of running processes.
 
-```
-<wodle name="command">
-    <disabled>no</disabled>
-    <tag>ps-list</tag>
-    <command>ps -eo user,pid,cmd</command>
-    <interval>10s</interval>
-    <ignore_output>no</ignore_output>
-    <run_on_start>yes</run_on_start>
-    <timeout>5</timeout>
-</wodle>
-```
-
-A priori the Wazuh manager does not detect the reverse shell 
-
-https://documentation.wazuh.com/current/proof-of-concept-guide/detect-unauthorized-processes-netcat.html
-
-```
+```xml
 <ossec_config>
     <localfile>
         <log_format>full_command</log_format>
@@ -215,3 +214,36 @@ https://documentation.wazuh.com/current/proof-of-concept-guide/detect-unauthoriz
     </localfile>
 </ossec_config>
 ```
+
+Restart agent.
+
+```
+$ systemctl restart wazuh-agent
+```
+
+Install Netcat in the agent.
+
+```
+$ sudo apt install nmap-ncat
+```
+
+Add following rules to */var/ossec/etc/rules/local_rules.xml* at the Wazuh manager.
+
+```xml
+<group name="ossec,">
+    <rule id="100050" level="0">
+        <if_sid>530</if_sid>
+        <match>^ossec: output: 'process list'</match>
+        <description>List of running processes.</description>
+        <group>process_monitor,</group>
+    </rule>
+    <rule id="100051" level="7" ignore="900">
+        <if_sid>100050</if_sid>
+        <match>nc -l</match>
+        <description>Netcat listening for incoming connections.</description>
+        <group>process_monitor,</group>
+    </rule>
+</group>
+```
+
+!["Netcat listening"](images/image12.png "Netcat listening")
