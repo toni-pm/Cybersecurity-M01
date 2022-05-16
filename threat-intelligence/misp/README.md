@@ -10,7 +10,7 @@ header-includes:
 ---
 
 <!--
-pandoc README.md -o Toni_Peraira_Threat_Intelligence_MISP.pdf --from markdown --template eisvogel --listings --pdf-engine=xelatex
+pandoc README.md -o Toni_Peraira_Threat_Intelligence_MISP.pdf --from markdown --template eisvogel --listings --pdf-engine=xelatex --toc -s -V toc-title:"Index"
 -->
 
 Threat Intelligence - MISP
@@ -33,7 +33,7 @@ For the system -> misp:Password1234
 
 **This virtual machine is not made for production, it's not secure.**
 
-![""](images/image01.png "")
+!["MISP Login"](images/image01.png "MISP Login")
 
 ---
 
@@ -49,7 +49,7 @@ Password Policy:
 
     [a-z]: at least one lower-case character
 
-![""](images/image02.png "")
+!["Change password"](images/image02.png "Change password")
 
 ---
 
@@ -67,9 +67,9 @@ For this example I created one for our school:
 
 Select *Add User* from the *Administration* menu bar.
 
-![""](images/image04.png "")
+!["Add User"](images/image04.png "Add User")
 
-![""](images/image05.png "")
+!["List Users"](images/image05.png "List Users")
 
 ---
 
@@ -97,11 +97,11 @@ From the menu bar, select *Event Actions* and *Add Event*.
 
 Fill it with the information requested:
 
-![""](images/image06.png "")
+!["Add Event"](images/image06.png "Add Event")
 
 Now, if you list the events you should see something like this:
 
-![""](images/image07.png "")
+!["List Events"](images/image07.png "List Events")
 
 Let's add attributes to this event.
 
@@ -113,11 +113,11 @@ In our example, a very clear attribute is the domain that we consider suspicious
 
 Click on the event ID to see its contents:
 
-![""](images/image08.png "")
+!["Event info"](images/image08.png "Event info")
 
 Then add a new attribute from the menu. Fill the data.
 
-![""](images/image09.png "")
+!["Add Attribute"](images/image09.png "Add Attribute")
 
 # Feeds
 
@@ -129,12 +129,12 @@ By default, the application has two but the are disabled.
 
 Select and enable them.
 
-![""](images/image10.png "")
+!["List Feeds"](images/image10.png "List Feeds")
 
 In a short time we will start receiving events created by the two enabled feeds.
 We can see events listed:
 
-![""](images/image11.png "")
+!["Events created"](images/image11.png "Events created")
 
 # Automatic enrichment
 
@@ -142,15 +142,15 @@ Now, the part that interests us is in our event. Click the event to display its 
 
 We can see in the *Related Events* column our related event. Click it.
 
-![""](images/image12.png "")
+!["Related Events"](images/image12.png "Related Events")
 
 This event is created by the  CthulhuSPRL.be organization with data from 2014 and contains 1067 attributes.
 
-![""](images/image13.png "")
+!["View Event"](images/image13.png "View Event")
 
 Below the description we can see the list of all its attributes, one of which we are interested in:
 
-![""](images/image14.png "")
+!["List Attributes"](images/image14.png "List Attributes")
 
 So, yes, this link is already classified as ***OSINT ShellShock scanning IPs from OpenDNS***.
 
@@ -177,21 +177,49 @@ They have defined the following tags:
 
 **According to the information given the taxonomies by MISP, explain briefly what involves each color in an event.**
 
+- **Red**
+
+For information that is limited to selected persons and its disclosure could have a negative impact on operations.
+
+It can be distributed only to designated persons.
+
+- **Amber**
+
+For internal information that with its misuse or distribution would cause privacy risks affecting reputation and operations.
+
+It can be distributed only with the members of the organization who are authorized to have knowledge of the information.
+
+- **Green**
+
+For all the information that can be shared in the organization and with third parties.
+
+It can be distributed to partner organizations, but not by public means.
+
+- **White**
+
+For information that can be used without causing any risk in case it's misused.
+
+Information can be shared publicly in accordance with the law.
+
 ## Activity 2
 
 **When the event is captured in the previous page, there is a warning in the *Tags* section.**
 
 **What is the warning telling us?**
 
-![""](images/image15.png "")
+!["Warning"](images/image15.png "Warning")
 
-![""](images/image16.png "")
+It's saying that this taxonomy is exclusive, therefore it only makes sense to have one tls color. 
+
+If we remove one of the colors we will no longer see the warning.
+
+!["Warning corrected"](images/image16.png "Warning corrected")
 
 # Galaxies
 
 Galaxies are templates for describing more information about an event or attribute. To list them we go to *List Galaxies* from the *Galaxies* menu bar.
 
-![""](images/image17.png "")
+!["List Galaxies"](images/image17.png "List Galaxies")
 
 Let's look at one: *Threat Actor*
 
@@ -200,11 +228,11 @@ Let's look at one: *Threat Actor*
 This is a fairly simple case, we got only a name and a description.
 We can see all the published instances of this galaxy:
 
-![""](images/image19.png "")
+!["Threat Actor galaxy"](images/image19.png "Threat Actor galaxy")
 
 We select one to see its history:
 
-![""](images/image20.png "")
+!["Instances of the galaxy"](images/image20.png "Instances of the galaxy")
 
 
 # Cluster
@@ -217,9 +245,9 @@ Clusters are simply an instance of a galaxy.
 
 **Attach a screenshot of your new cluster.**
 
-![""](images/image21.png "")
+!["Add Cluster"](images/image21.png "Add Cluster")
 
-![""](images/image22.png "")
+!["Our new Cluster"](images/image22.png "Our new Cluster")
 
 ---
 
@@ -236,10 +264,10 @@ Now, we add this cluster to the created event. List events, select yours and edi
 
 **Attach a screenshot of your event from Montilivi's cluster that you just created.**
 
-![""](images/image23.png "")
+!["Add new cluster"](images/image23.png "Add new cluster")
 
 Publish the event.
 
-![""](images/image24.png "")
+!["Published event 1"](images/image24.png "Published event 1")
 
-![""](images/image25.png "")
+!["Published event 2"](images/image25.png "Published event 2")
