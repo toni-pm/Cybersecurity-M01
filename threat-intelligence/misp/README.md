@@ -33,6 +33,8 @@ For the system -> misp:Password1234
 
 **This virtual machine is not made for production, it's not secure.**
 
+![""](images/image01.png "")
+
 ---
 
 **Set an administrator password for the whole system.**
@@ -47,19 +49,27 @@ Password Policy:
 
     [a-z]: at least one lower-case character
 
+![""](images/image02.png "")
+
 ---
 
-# Define your organization**
+# Define your organization
 
 From the menu bar, select Add Organizations and fill the fields of your own organization.
 
 For this example I created one for our school:
+
+![""](images/image03.png "")
 
 ---
 
 # Create a user with *Org admin* permissions on your new organization.
 
 Select *Add User* from the *Administration* menu bar.
+
+![""](images/image04.png "")
+
+![""](images/image05.png "")
 
 ---
 
@@ -80,7 +90,6 @@ Cluster: Is an instance of a galaxy.
 
 # Event
 
-
 Let's understand what an event is while creating one. Suppose that a user in our organization receives an email with a suspicious link, for example: <span style="color: red;">linksys.secureshellz.net</span>
 Obviously, we don't want to open the link without knowing if this domain is malware free.
 
@@ -88,7 +97,11 @@ From the menu bar, select *Event Actions* and *Add Event*.
 
 Fill it with the information requested:
 
+![""](images/image06.png "")
+
 Now, if you list the events you should see something like this:
+
+![""](images/image07.png "")
 
 Let's add attributes to this event.
 
@@ -100,38 +113,44 @@ In our example, a very clear attribute is the domain that we consider suspicious
 
 Click on the event ID to see its contents:
 
+![""](images/image08.png "")
 
 Then add a new attribute from the menu. Fill the data.
+
+![""](images/image09.png "")
 
 # Feeds
 
 In order to find out if someone else has found this link and has already studied it, we will add the feeds, which are serie of OSINT events that we can import.
 
-With admin@admin.test user you can see the *Sync Actions* option in the menu bar. Select the *List Feeds* option.
+Select the *List Feeds* option.
 
 By default, the application has two but the are disabled.
 
 Select and enable them.
 
-In a short time we will start receiving events created by the two able feeds.
+![""](images/image10.png "")
+
+In a short time we will start receiving events created by the two enabled feeds.
 We can see events listed:
+
+![""](images/image11.png "")
 
 # Automatic enrichment
 
 Now, the part that interests us is in our event. Click the event to display its content and go to its attribute.
 
-
-
 We can see in the *Related Events* column our related event. Click it.
 
-
+![""](images/image12.png "")
 
 This event is created by the  CthulhuSPRL.be organization with data from 2014 and contains 1067 attributes.
 
-
+![""](images/image13.png "")
 
 Below the description we can see the list of all its attributes, one of which we are interested in:
 
+![""](images/image14.png "")
 
 So, yes, this link is already classified as ***OSINT ShellShock scanning IPs from OpenDNS***.
 
@@ -164,23 +183,28 @@ They have defined the following tags:
 
 **What is the warning telling us?**
 
+![""](images/image15.png "")
+
+![""](images/image16.png "")
+
 # Galaxies
 
 Galaxies are templates for describing more information about an event or attribute. To list them we go to *List Galaxies* from the *Galaxies* menu bar.
 
-
+![""](images/image17.png "")
 
 Let's look at one: *Threat Actor*
 
-
+![""](images/image18.png "")
 
 This is a fairly simple case, we got only a name and a description.
 We can see all the published instances of this galaxy:
 
-
+![""](images/image19.png "")
 
 We select one to see its history:
 
+![""](images/image20.png "")
 
 
 # Cluster
@@ -193,6 +217,10 @@ Clusters are simply an instance of a galaxy.
 
 **Attach a screenshot of your new cluster.**
 
+![""](images/image21.png "")
+
+![""](images/image22.png "")
+
 ---
 
 In order to use this new custer, we must publish it.
@@ -202,9 +230,16 @@ Publish is not a immediate action, it may take a few minutes.
 
 Now, we add this cluster to the created event. List events, select yours and edit it. Add a cluster MISP, *Threat Actor*, and then start typing the name of your cluster until you see it.
 
-
 ---
 
 ## Activity 4
 
 **Attach a screenshot of your event from Montilivi's cluster that you just created.**
+
+![""](images/image23.png "")
+
+Publish the event.
+
+![""](images/image24.png "")
+
+![""](images/image25.png "")
